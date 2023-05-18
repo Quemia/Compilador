@@ -4,8 +4,8 @@ function main(inicial, estado, alfabeto, simbolos) {
 
     if (estado == 0) {
       if (alfabeto.includes(caractere)) {
+        console.log("caract: " + caractere );
         Identificadores(estado, inicial, alfabeto);
-        console.log("caract: " + caractere + " estado <- 1");
       } else if (caractere == "@") {
         estado = 4;
         console.log("caract: " + caractere + " estado <- 4");
@@ -31,7 +31,7 @@ function main(inicial, estado, alfabeto, simbolos) {
         estado = 25;
         console.log("caract: " + caractere + " estado <- 25");
       } else {
-        console.log("Não reconhecido: ", caractere);
+        console.log("Não reconhecido:", caractere);
         estado = -1;
       }
     } else {
@@ -42,13 +42,13 @@ function main(inicial, estado, alfabeto, simbolos) {
 }
 
 function Identificadores(estado, inicial, alfabeto) {
+  console.log('entrei '+inicial.length);
   for (i = 0; i < inicial.length; i++) {
+    console.log(inicial + " / " + estado);
     let caractere = inicial[i];
-    console.log(caractere + " / " + estado +" / "+ inicial);
-    
     if (estado == 0) {
       if (alfabeto.includes(caractere)) {
-        console.log(caractere + " / " + estado);
+        console.log(caractere + "  " + estado);
         estado = 1;
       } else {
         console.log(caractere + " / " + estado);
@@ -58,48 +58,51 @@ function Identificadores(estado, inicial, alfabeto) {
       }
     } else if (estado == 1) {
       if (alfabeto.includes(caractere) || /\d/.test(caractere)) {
-        console.log(caractere + " / " + estado);
+        console.log(caractere + "  " + estado);
         estado = 3;
       } else if (caractere == "_") {
-        console.log(caractere + " / " + estado);
+        console.log(caractere + "  " + estado);
         estado = 2;
       } else if (caractere == "@") {
-        console.log(caractere + " / " + estado);
+        console.log(caractere + "  " + estado);
         estado = 2;
       } else {
-        console.log(caractere + " / " + estado);
+        console.log(caractere + "  " + estado);
         console.log("Cadeia não reconhecida");
         estado = -1;
         break;
       }
     } else if (estado == 2) {
       if (alfabeto.includes(caractere) || /\d/.test(caractere)) {
-        console.log(caractere + " / " + estado);
+        console.log(caractere + "  " + estado);
         estado = 3;
       } else {
-        console.log(caractere + " / " + estado);
+        console.log(caractere + "  " + estado);
         console.log("Cadeia não reconhecida");
+        console.log("entrei ii");
         estado = -1;
         break;
       }
     } else if (estado == 3) {
       if (alfabeto.includes(caractere) || /\d/.test(caractere)) {
-        console.log(caractere + " / " + estado);
+        console.log(caractere + "  " + estado);
         estado = 3;
       } else {
-        console.log(caractere + " / " + estado);
+        console.log(caractere + "  " + estado);
         console.log("Cadeia não reconhecida ");
+        console.log("entrei ii");
         estado = -1;
         break;
       }
     } else {
-      console.log(caractere + " / " + estado);
+      console.log(caractere + "  " + estado);
       console.log("Cadeia não reconhecida");
       break;
     }
   }
   if (estado == 1 || estado == 3) {
     console.log("Cadeia Reconhecida.");
+    // estado = 0;
   }
 }
 
@@ -400,6 +403,7 @@ function Comentarios(estado, inicial) {
   }
 }
 
+
 function LeitorArquivo(caminho) {
   let estado = 0;
   var inicial = "";
@@ -461,13 +465,15 @@ function LeitorArquivo(caminho) {
     "z",
   ];
 
+  let removeEspaco = /\s*;\s*/;
+
   fs.readFile(caminho, "utf-8", (error, data) => {
     if (error) {
       console.log("erro de leitura: " + error.message);
     } else {
-      console.log(data);
-      inicial = data;
-      main(data, estado, alfabeto, simbolos);
+      console.log(data.split("\n"));
+      inicial = data.split();
+      // main(data, estado, alfabeto, simbolos);
     }
   });
 }
@@ -479,6 +485,7 @@ const fs = require("fs");
 const nome_arquivo = "/arquivo.txt";
 const path = __dirname + `${nome_arquivo}`;
 LeitorArquivo(path);
+
 
 // REGEX PARA COMENTÁRIO
 var regex = "\n";
