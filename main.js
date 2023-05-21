@@ -496,3 +496,4 @@ var resultado = regex.match(criaRegex);
 // Comentarios(estado, inicial);
 // Digitos(estado, inicial);
 // SimbolosEspeciais(estado, inicial, simbolos);
+// i+1 = len(entrada)
