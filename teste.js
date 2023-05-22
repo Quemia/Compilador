@@ -4,35 +4,49 @@ function main(inicial, estado, alfabeto, simbolos) {
     if (estado != -1) {
       if (estado == 0) {
         if (alfabeto.includes(caractere)) {
+          // console.log("esssseeee ", alfabeto.includes(inicial[i + 1]));
+          // console.log(inicial[i + 1]);
+
           //verifica se é identificador único
-          // console.log("eeeee " + inicial[i + 1]);
           if (inicial[i + 1] == undefined) {
-            console.log("esssseeee ");
-            console.log("eeeee " + inicial[i]);
+            // console.log("*****");
             tokens.push(inicial[i]);
             estado = 1;
             //verifica se o próximo é @ ou _
           } else if (inicial[i + 1] == "_" || inicial[i + 1] == "@") {
+            // console.log("eee1ee " + inicial[i]);
+            lexeme = inicial[i];
             estado = 2;
-          } else if (
-            inicial[i + 1] != "@" ||
-            inicial[i + 1] != "_" ||
-            inicial[i + 1] != undefined
-          ) {
-            console.log("eeeee " + inicial[i]);
-            tokens.push(inicial[i]);
-            estado = 3;
+          } else if (inicial[i + 1] != "@" || inicial[i + 1] != "_") {
+            if (
+              alfabeto.includes(inicial[i + 1]) ||
+              /\d/.test(inicial[i + 1])
+            ) {
+              // console.log("inicial[i]  " + inicial[i]);
+              // console.log("inicial[i+1] " + inicial[i + 1]);
+              lexeme = inicial[i];
+              // console.log("lexeme estado 0", lexeme);
+              // console.log("----------");
+              estado = 3;
+            } else {
+              // console.log("lexeme else 0", lexeme);
+              lexeme = inicial[i];
+              // tokens.push(inicial[i]);
+              estado = 3;
+            }
           } else {
             estado = -1;
           }
         } else if (caractere == "@") {
-          if (inicial[i + 1] == undefined) {
-            tokens.push(inicial[i]);
+          if (inicial[i + 1] == "@") {
+            lexema = inicial[i];
             estado = 4;
           } else {
+            tokens.push(inicial[i]);
             estado = 4;
           }
         } else if (caractere == "/") {
+          lexeme = inicial[i];
           estado = 6;
         } else if (/\d/.test(caractere)) {
           estado = 15;
@@ -64,6 +78,11 @@ function main(inicial, estado, alfabeto, simbolos) {
         }
       } else if (estado == 2) {
         if (alfabeto.includes(inicial[i + 1]) || /\d/.test(inicial[i + 1])) {
+          // console.log(" 1", inicial[i + 1]);
+          lexeme = lexeme + inicial[i];
+          // console.log(" 1?", lexeme);
+          // console.log("1", inicial[i]);
+
           estado = 3;
         } else if (inicial[i + 1] != alfabeto.includes(inicial[i + 1])) {
           estado = 0;
@@ -71,22 +90,72 @@ function main(inicial, estado, alfabeto, simbolos) {
           estado = -1;
         }
       } else if (estado == 3) {
-        if (alfabeto.includes(caractere) || /\d/.test(caractere)) {
-          estado = 3;
-        } else if (inicial[i + 1] != alfabeto.includes(inicial[i + 1])) {
+        //verifica se é letra ou numero
+        if (alfabeto.includes(inicial[i]) || /\d/.test(inicial[i])) {
+          // console.log("ini ", inicial[i - 1]);
+          // console.log("verdadeeeeeeeeeeeeeeeeee ", inicial[i]);
+          // console.log(lexeme.includes("_")) || lexeme.includes("@");
+          // verifica se o próximo é letra ex: Tt / Tttt
+          if (alfabeto.includes(inicial[i + 1]) || /\d/.test(inicial[i + 1])) {
+            // console.log(inicial[i]);
+            // console.log("..........");
+            lexeme = lexeme + inicial[i];
+            // console.log("entrei lexeme: ", lexeme);
+            estado = 3;
+
+            //verificar s e o anterior é
+          } else if (inicial[i - 1] == "_" || inicial[i - 1] == "@") {
+            lexeme = lexeme + inicial[i];
+            // console.log("888888");
+            // console.log("ini lex ", lexeme);
+            // console.log("ini ", inicial[i]);
+            tokens.push(lexeme);
+            estado = 3;
+
+            //verifica se o lexema possui _ ou @
+          } else if (lexeme.includes("_") || lexeme.includes("@")) {
+            // console.log("////////");
+            lexeme = lexeme + inicial[i];
+            // console.log(lexeme);
+            tokens.push(lexeme);
+            estado = 3;
+          } else if (alfabeto.includes(inicial[i]) || /\d/.test(inicial[i])) {
+            // console.log("+++++++++++");
+            // console.log("entrei ??? ", lexeme);
+            lexeme = lexeme + inicial[i];
+            estado = 3;
+          } else if (inicial[i + 1] == undefined) {
+            // console.log("////////");
+            // console.log("entrei ??? ", lexeme);
+            lexeme = lexeme + inicial[i];
+            tokens.push(lexeme);
+            estado = 3;
+          } else {
+            // console.log("¨¨¨¨¨¨¨");
+            tokens.push(lexeme);
+            estado = 3;
+          }
+          //verifica se o proximo não é igual a letra ou numero
+        } else if (
+          inicial[i + 1] != alfabeto.includes(inicial[i + 1]) ||
+          inicial[i + 1] != /\d/.includes(inicial[i + 1])
+        ) {
+          console.log("entra???", lexeme);
+          tokens.push(lexeme);
           estado = 0;
         } else {
           estado = -1;
         }
       } else if (estado == 4) {
         if (inicial[i] == "@") {
-          tokens.push(inicial[i] + inicial[i - 1]);
+          lexema = lexema + inicial[i];
           estado = 5;
         } else {
           estado = -1;
         }
       } else if (estado == 5) {
         if (inicial[i] == regex) {
+          tokens.push(lexema);
           estado = 10;
         } else if (inicial[i] != regex) {
           estado = 5;
@@ -95,8 +164,10 @@ function main(inicial, estado, alfabeto, simbolos) {
         }
       } else if (estado == 6) {
         if (caractere == "#") {
+          lexeme = lexeme + inicial[i];
           estado = 11;
         } else if (caractere == "/") {
+          lexeme = lexeme + inicial[i];
           estado = 7;
         } else {
           estado = -1;
@@ -104,7 +175,10 @@ function main(inicial, estado, alfabeto, simbolos) {
       } else if (estado == 7) {
         estado = 8;
       } else if (estado == 8) {
-        if (caractere == "/") {
+        if (caractere == "/" && inicial[i + 1] == "/") {
+          lexeme = lexeme + inicial[i];
+          estado = 9;
+        } else if (caractere == "/") {
           estado = 9;
         } else if (caractere != "/") {
           estado = 8;
@@ -112,17 +186,25 @@ function main(inicial, estado, alfabeto, simbolos) {
           estado = -1;
         }
       } else if (estado == 9) {
+        console.log("i:  ", inicial[i]);
         if (caractere == "/") {
+          lexeme = lexeme + inicial[i];
+          tokens.push(lexeme);
           estado = 10;
         } else if (caractere != "/") {
           estado = 8;
         } else {
-          estado = -1;
+          estado = 0;
         }
+      } else if (estado == 10) {
+        estado = 0;
       } else if (estado == 11) {
         estado = 12;
       } else if (estado == 12) {
-        if (caractere == "#") {
+        if (caractere == "#" && inicial[i + 1] == "/") {
+          lexeme = lexeme + inicial[i];
+          estado = 13;
+        } else if (caractere == "#") {
           estado = 13;
         } else if (caractere != "#") {
           estado = 12;
@@ -131,6 +213,8 @@ function main(inicial, estado, alfabeto, simbolos) {
         }
       } else if (estado == 13) {
         if (caractere == "/") {
+          lexeme = lexeme + inicial[i];
+          tokens.push(lexeme);
           estado = 10;
         } else if (caractere != "/") {
           estado = 12;
@@ -190,7 +274,7 @@ function main(inicial, estado, alfabeto, simbolos) {
           estado = -1;
         }
       } else {
-        console.log(caractere + "  " + estado);
+        console.log(inicial[i] + "  " + estado);
         console.log("Cadeia não reconhecida");
         estado = -1;
       }
@@ -293,9 +377,20 @@ function LeitorArquivo(caminho) {
     }
 
     main(inicial, estado, alfabeto, simbolos);
-    // for (i = 0; i < inicial.length; i++) {}
+
+    // for (i = 0; i < tokens.length; i++) {
+    //   // if(tokens[i])
+    //   console.log(tokens.length);
+    //   console.log(tokens[i]);
+    //   console.log(regexTeste.test(tokens[i]));
+    // }
   });
 }
+
+function checkStr(str) {
+  return token.includes(str);
+}
+var regexTeste = /[a-zA-Z0-9]/g;
 
 const { Console } = require("console");
 // CAMINHO PARA LEITOR DE ARQUIVO
@@ -304,15 +399,6 @@ const readline = require("readline");
 const nome_arquivo = "/arquivo.txt";
 const path = __dirname + `${nome_arquivo}`;
 LeitorArquivo(path);
-
-// var r = readline.createInterface({
-//   input: fs.createReadStream(nome_arquivo),
-// });
-// r.on("line", (text) => {
-//   console.log(text);
-// });
-
-// console.log("teste " + readline.nome_arquivo);
 
 // REGEX PARA COMENTÁRIO
 var regex = "$";
@@ -340,4 +426,16 @@ var palavrasReservadas = [
   "begin",
 ];
 
-// console.log()
+var lexeme = "";
+/*
+  else if (
+          !alfabeto.includes(inicial[i + 1]) &&
+          !/\d/.test(inicial[i + 1])
+        ) {
+          console.log("inicial[i] 2 " + inicial[i]);
+          console.log("inicial[i+1] 2 " + inicial[i + 1]);
+          console.log("lexeme NOT  2 ", lexeme);
+          // lexeme = lexeme + inicial[i];
+          tokens.push(lexeme);
+          estado = 0;
+        }*/

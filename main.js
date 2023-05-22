@@ -4,7 +4,7 @@ function main(inicial, estado, alfabeto, simbolos) {
 
     if (estado == 0) {
       if (alfabeto.includes(caractere)) {
-        console.log("caract: " + caractere );
+        console.log("caract: " + caractere);
         Identificadores(estado, inicial, alfabeto);
       } else if (caractere == "@") {
         estado = 4;
@@ -42,7 +42,7 @@ function main(inicial, estado, alfabeto, simbolos) {
 }
 
 function Identificadores(estado, inicial, alfabeto) {
-  console.log('entrei '+inicial.length);
+  console.log("entrei " + inicial.length);
   for (i = 0; i < inicial.length; i++) {
     console.log(inicial + " / " + estado);
     let caractere = inicial[i];
@@ -102,6 +102,7 @@ function Identificadores(estado, inicial, alfabeto) {
   }
   if (estado == 1 || estado == 3) {
     console.log("Cadeia Reconhecida.");
+    return true;
     // estado = 0;
   }
 }
@@ -403,7 +404,6 @@ function Comentarios(estado, inicial) {
   }
 }
 
-
 function LeitorArquivo(caminho) {
   let estado = 0;
   var inicial = "";
@@ -471,14 +471,23 @@ function LeitorArquivo(caminho) {
     if (error) {
       console.log("erro de leitura: " + error.message);
     } else {
-      console.log(data.split("\n"));
-      inicial = data.split();
+      // console.log(data.split("\n"));
+      inicial = data;
       // main(data, estado, alfabeto, simbolos);
+    }
+    console.log(inicial.length);
+    for (i = 0; i < inicial.length; i++) {
+      if (alfabeto.includes(inicial[i])) {
+        Identificadores(0, inicial[i], alfabeto);
+      } else {
+        console.lof("ERRO");
+      }
+      console.log("e " + inicial[i]);
+      console.log(alfabeto.includes(inicial[i]));
+      // if(inicial[i])
     }
   });
 }
-
-
 
 // CAMINHO PARA LEITOR DE ARQUIVO
 const fs = require("fs");
@@ -486,11 +495,11 @@ const nome_arquivo = "/arquivo.txt";
 const path = __dirname + `${nome_arquivo}`;
 LeitorArquivo(path);
 
-
 // REGEX PARA COMENTÁRIO
 var regex = "\n";
 var criaRegex = / [/\n\n\r/]/g;
 var resultado = regex.match(criaRegex);
+var teste = /[a-zA-Z0-9]/g;
 
 // Identificadores(estado, alfabeto);
 // Comentarios(estado, inicial);
