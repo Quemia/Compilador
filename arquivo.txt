@@ -1,1 +1,11 @@
-program teste 
+program contador ;
+  n_um1 = 10 ; 
+  num2 = 3 ; 
+  @@ interação sobre o contador
+  for ( i = 0 ; i < count ; i ++ ){
+    if (true ){
+      console .log ( leia );
+    }
+    print ( count );
+  } 
+fim
