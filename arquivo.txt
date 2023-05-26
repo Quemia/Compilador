@@ -1,4 +1,4 @@
-program contador ;
+program contador;
   n_um1 = 10 ; 
   num2 = 3 ; 
   @@ interação sobre o contador
@@ -8,4 +8,5 @@ program contador ;
     }
     print ( count );
   } 
+    @@ ola mundo
 fim
