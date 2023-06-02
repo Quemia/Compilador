@@ -96,8 +96,8 @@ function main(inicial, alfabeto, simbolos) {
             caractere != "@" ||
             caractere != "_"
           ) {
-            lexeme += inicial[i];
             console.log(`Identificador: ${lexeme}`);
+            i -= 1;
             lexeme = "";
             estado = 0;
           } else {
