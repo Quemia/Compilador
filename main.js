@@ -1,12 +1,17 @@
-function main(inicial, estado, alfabeto, simbolos) {
+var estado = 0;
+var comentario = false;
+function main(inicial, alfabeto, simbolos) {
   for (i = 0; i < inicial.length; i++) {
     var count = i + 1;
     var caractere = inicial[i];
-    var comentario = false;
     if (estado != -1) {
       if (comentario == false) {
         if (estado == 0) {
-          if (caractere == " " || count == inicial.length) {
+          if (
+            caractere == " " ||
+            count == inicial.length ||
+            caractere == "\n"
+          ) {
             i += 1;
             estado = 0;
             lexeme = "";
@@ -14,6 +19,7 @@ function main(inicial, estado, alfabeto, simbolos) {
             if (count == inicial.length) {
               lexeme += caractere;
               console.log(`Identificador: ${lexeme}`);
+              i -= 1;
               estado = 0;
               lexeme = "";
             } else {
@@ -164,46 +170,15 @@ function main(inicial, estado, alfabeto, simbolos) {
             comentario = true;
             estado = 11;
           } else if (caractere == "/") {
+            lexeme += caractere;
             comentario = true;
-            lexeme = lexeme + caractere;
-            console.log(lexeme, comentario)
             estado = 7;
           } else {
-            // estado = -1;
             console.log("Simbolo Especial: ", lexeme);
             lexeme = "";
             i -= 1;
             estado = 0;
           }
-          // } else if (estado == 7) {
-          //   if (count == inicial.length) {
-          //     inicial += i;
-          //     estado = 8;
-          //   } else {
-          //     estado = 8;
-          //   }
-          // } else if (estado == 8) {
-          //   if (caractere == "/") {
-          //     lexeme += caractere;
-          //     estado = 9;
-          //   } else {
-          //     estado = 8;
-          //   }
-          // } else if (estado == 9) {
-          //   if (caractere == "/") {
-          //     lexeme = lexeme + inicial[i];
-          //     console.log(`Comentário: ${lexeme}`);
-          //     lexeme = "";
-          //     estado = 10;
-          //   } else if (caractere != "/") {
-          //     //retiva do lexema o ultimo adicionado, pois não era simbolo de comentário
-          //     lexeme = lexeme.slice(0, -1);
-          //     estado = 8;
-          //   } else {
-          //     estado = -1;
-          //   }
-          // } else if (estado == 10) {
-          //   estado = 0;
         } else if (estado == 11) {
           // console.log(lexeme)
           // if (count == inicial.length) {
@@ -309,16 +284,6 @@ function main(inicial, estado, alfabeto, simbolos) {
           lexeme = "";
           estado = 0;
         } else if (estado == 21) {
-          if (caractere == ">" || caractere == "=") {
-            console.log(`Simbolo Especial: ${lexeme}`);
-            lexeme = "";
-            estado = 0;
-          } else {
-            console.log(`Simbolo Especial: ${lexeme}`);
-            lexeme = "";
-            estado = 0;
-          }
-        } else if (estado == 23) {
           if (caractere == "=") {
             lexeme += caractere;
             console.log(`Simbolo Especial: ${lexeme}`);
@@ -335,10 +300,7 @@ function main(inicial, estado, alfabeto, simbolos) {
           estado = -1;
         }
       } else {
-        console.log(lexeme, comentario)
-        // console.log("entreiiii")
         if (estado == 7) {
-          console.log(lexeme, comentario)
           if (count == inicial.length) {
             inicial += i;
             estado = 8;
@@ -346,18 +308,18 @@ function main(inicial, estado, alfabeto, simbolos) {
             estado = 8;
           }
         } else if (estado == 8) {
-          if (caractere == "/") {
+          estado = 8;
+          if (caractere == "/" && count == inicial.length) {
             lexeme += caractere;
             estado = 9;
-          } else {
-            estado = 8;
+          } else if (caractere != "/" && count == inicial.length) {
+            i += 1;
+            comentario = true;
+            estado = 9;
           }
         } else if (estado == 9) {
           if (caractere == "/") {
-            lexeme = lexeme + inicial[i];
-            console.log(`Comentário: ${lexeme}`);
-            lexeme = "";
-            comentário = false;
+            lexeme += caractere;
             estado = 10;
           } else if (caractere != "/") {
             lexeme = lexeme.slice(0, -1);
@@ -366,6 +328,11 @@ function main(inicial, estado, alfabeto, simbolos) {
             estado = -1;
           }
         } else if (estado == 10) {
+          lexeme += caractere;
+          console.log(`Comentário: ${lexeme}`);
+          lexeme = "";
+          i += 1;
+          comentario = false;
           estado = 0;
         }
       }
@@ -377,7 +344,6 @@ function main(inicial, estado, alfabeto, simbolos) {
 }
 
 function LeitorArquivo(caminho) {
-  let estado = 0;
   var inicial = "";
 
   const simbolos = [",", ".", ";", "*", "(", ")", "#", "=", "{", "}"];
@@ -440,7 +406,7 @@ function LeitorArquivo(caminho) {
 
   lineReader.eachLine("arquivo.txt", function (line, last) {
     inicial = line;
-    main(inicial, estado, alfabeto, simbolos);
+    main(inicial, alfabeto, simbolos);
   });
 }
 
@@ -504,7 +470,6 @@ var simbolosEspecais = [
   "_",
   "#",
 ];
-
 var regex = "\n";
 var criaRegex = / [/\n\n\r/]/g;
 var resultado = regex.match(criaRegex);
