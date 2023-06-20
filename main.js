@@ -11,14 +11,11 @@ function main(inicial, alfabeto, simbolos) {
     if (estado != -1) {
       if (comentario == false) {
         if (estado == 0) {
-          if (
-            caractere == " " ||
-            count == inicial.length ||
-            caractere == "\n"
-          ) {
+          if (caractere == " " || caractere == "\n") {
             i += 1;
-            estado = 0;
             lexeme = "";
+            i -= 1;
+            estado = 0;
           } else if (alfabeto.includes(caractere)) {
             if (count == inicial.length) {
               lexeme += caractere;
@@ -44,10 +41,9 @@ function main(inicial, alfabeto, simbolos) {
             lexeme = inicial[i];
             estado = 6;
           } else if (/\d/.test(caractere)) {
-            lexeme = caractere;
+            lexeme += caractere;
             estado = 15;
           } else if (caractere == "-") {
-            console.log("2 * ", caractere);
             if (count == inicial.length) {
               console.log(`Simbolo Especial: ${lexeme}`);
               // i -= 1;
@@ -57,22 +53,20 @@ function main(inicial, alfabeto, simbolos) {
             lexeme = caractere;
             estado = 14;
           } else if (caractere == "+") {
-            lexeme = inicial[i];
+            lexeme = caractere;
             estado = 19;
           } else if (caractere == "<") {
             lexeme += caractere;
             estado = 21;
           } else if (caractere == ">" || caractere == ":") {
             lexeme += caractere;
-            console.log(lexeme);
             estado = 23;
           } else if (simbolos.includes(caractere)) {
             console.log("Simbolo Especial: ", caractere);
             lexeme = "";
             estado = 0;
           } else {
-            lexeme += caractere;
-            console.log(`Erro: Caractere não esperado: ${lexeme}`);
+            console.log(`Erro: Caractere não esperado: ${caractere}`);
             estado = -1;
           }
         } else if (estado == 1) {
@@ -111,8 +105,10 @@ function main(inicial, alfabeto, simbolos) {
             //   lexeme = "";
             //   estado = 0;
           } else {
-            console.log(`Erro: Caractere não esperado: ${lexeme}`);
-            estado = -1;
+            console.log(`Identificador: ${lexeme}`);
+            i -= 1;
+            estado = 0;
+            lexeme = "";
           }
         } else if (estado == 2) {
           if (alfabeto.includes(caractere) || /\d/.test(caractere)) {
@@ -128,7 +124,8 @@ function main(inicial, alfabeto, simbolos) {
             estado = 3;
             // }
           } else {
-            lexeme += caractere;
+            // lexeme += caractere;
+            console.log(`Erro: Caractere não esperado: ${caractere}`);
             estado = -1;
           }
         } else if (estado == 3) {
@@ -150,12 +147,15 @@ function main(inicial, alfabeto, simbolos) {
           } else {
             if (palavrasReservadas.includes(lexeme)) {
               console.log(`Palavra Reservada: ${lexeme}`);
+              // i -= 1;
+              lexeme = "";
+              estado = 0;
             } else {
               console.log(`Identificador: ${lexeme}`);
+              lexeme = "";
+              i -= 1;
+              estado = 0;
             }
-            i -= 1;
-            lexeme = "";
-            estado = 0;
           }
         } else if (estado == 4) {
           if (caractere == "@") {
@@ -192,7 +192,6 @@ function main(inicial, alfabeto, simbolos) {
             estado = 0;
           }
         } else if (estado == 14) {
-          console.log(lexeme + " *** " + caractere);
           if (caractere == "-") {
             lexeme += caractere;
             estado = 18;
@@ -237,6 +236,7 @@ function main(inicial, alfabeto, simbolos) {
           }
         } else if (estado == 18) {
           console.log("Operador", lexeme);
+          i -= 1;
           lexeme = "";
           estado = 0;
         } else if (estado == 19) {
@@ -249,20 +249,34 @@ function main(inicial, alfabeto, simbolos) {
             estado = 0;
           }
         } else if (estado == 20) {
-          console.log(`Simbolo Especial: ${lexeme}`);
+          console.log(`Operador: ${lexeme}`);
+          i -= 1;
           lexeme = "";
           estado = 0;
         } else if (estado == 21) {
-          if (caractere == "=") {
+          if (caractere == "=" || caractere == ">") {
             lexeme += caractere;
+            estado = 22;
+          } else {
             console.log(`Simbolo Especial: ${lexeme}`);
+            i -= 1;
+            lexeme = "";
+            estado = 0;
+          }
+        } else if (estado == 22) {
+          console.log("Simbolo Especial: ", lexeme);
+          i -= 1;
+          lexeme = "";
+          estado = 0;
+        } else if (estado == 23) {
+          if (caractere != "=") {
+            console.log("Simbolo Especial: ", lexeme);
+            i -= 1;
             lexeme = "";
             estado = 0;
           } else {
             lexeme += caractere;
-            console.log(`Simbolo Especial: ${lexeme}`);
-            lexeme = "";
-            estado = 0;
+            estado = 22;
           }
         } else {
           console.log(`Erro: Caractere não esperado ${caractere}`);
@@ -333,7 +347,6 @@ function main(inicial, alfabeto, simbolos) {
 
 function LeitorArquivo(caminho) {
   var inicial = "";
-
   const simbolos = [",", ".", ";", "*", "(", ")", "#", "=", "{", "}"];
   const alfabeto = [
     "A",
