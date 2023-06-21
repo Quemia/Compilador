@@ -1,7 +1,7 @@
 program teste {
   int n1 = 2,5;
   int n_ta2 = -50
-  char s@ma = 0;
+  char s@ma = 0
 
   @@ uma função de soma
 
@@ -11,9 +11,12 @@ program teste {
   }
 
   //
-  outro
+  outro  
   Comentário%%%%
-  //
+  //  
+
+s
 
 js
+
 }
