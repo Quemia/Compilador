@@ -1,12 +1,19 @@
-program teste;
-2 - 1;
-8 + 9;
-5 <> 3;
+program teste {
+  int n1 = 2,5;
+  int n_ta2 = -50
+  char s@ma = 0;
 
-//
---5
-++7
-22;
--8,6
-t 
-//
+  @@ uma função de soma
+
+  for(int i = 0; i >= arrayNotas; i++) {
+    s@ma = n1 + n_ta2;
+    j--
+  }
+
+  //
+  outro
+  Comentário%%%%
+  //
+
+js
+}

@@ -1,14 +1,14 @@
-// arrumar o contador de linhas
-// arrumar isso:
-//console.log(`Erro: Caractere não esperado: ${lexeme}`);
-
+//Aluna: Quemia Oliveira
+// Disc. Compiladores
 var estado = 0;
 var comentario = false;
+
 function main(inicial, alfabeto, simbolos) {
   for (i = 0; i < inicial.length; i++) {
     var count = i + 1;
     var caractere = inicial[i];
     if (estado != -1) {
+      conta_linha += 1;
       if (comentario == false) {
         if (estado == 0) {
           if (caractere == " " || caractere == "\n") {
@@ -20,7 +20,7 @@ function main(inicial, alfabeto, simbolos) {
             if (count == inicial.length) {
               lexeme += caractere;
               console.log(`Identificador: ${lexeme}`);
-              i -= 1;
+              // i -= 1;
               estado = 0;
               lexeme = "";
             } else {
@@ -64,9 +64,12 @@ function main(inicial, alfabeto, simbolos) {
           } else if (simbolos.includes(caractere)) {
             console.log("Simbolo Especial: ", caractere);
             lexeme = "";
+            // i -= 1;
             estado = 0;
           } else {
-            console.log(`Erro: Caractere não esperado: ${caractere}`);
+            console.log(
+              `Erro linha ${conta_linha}, caractere não esperado: ${caractere}`
+            );
             estado = -1;
           }
         } else if (estado == 1) {
@@ -80,8 +83,8 @@ function main(inicial, alfabeto, simbolos) {
                 estado = 0;
               } else {
                 console.log(`Identificador: ${lexeme}`);
-                i -= 1;
                 lexeme = "";
+                // i -= 1;
                 estado = 0;
               }
             } else {
@@ -125,7 +128,9 @@ function main(inicial, alfabeto, simbolos) {
             // }
           } else {
             // lexeme += caractere;
-            console.log(`Erro: Caractere não esperado: ${caractere}`);
+            console.log(
+              `Erro linha ${conta_linha}, caractere não esperado: ${caractere}`
+            );
             estado = -1;
           }
         } else if (estado == 3) {
@@ -279,12 +284,20 @@ function main(inicial, alfabeto, simbolos) {
             estado = 22;
           }
         } else {
-          console.log(`Erro: Caractere não esperado ${caractere}`);
+          console.log(
+            `Erro linha ${conta_linha}, caractere não esperado ${caractere}`
+          );
           estado = -1;
         }
       } else {
+        // console.log("*****", comentario);
         if (estado == 7) {
-          if (count == inicial.length) {
+          if (caractere == " " || caractere == "\n") {
+            i += 1;
+            lexeme = "";
+            // i -= 1;
+            estado = 7;
+          } else if (count == inicial.length) {
             inicial += i;
             estado = 8;
           } else {
@@ -292,15 +305,24 @@ function main(inicial, alfabeto, simbolos) {
           }
         } else if (estado == 8) {
           estado = 8;
-          if (caractere == "/" && count == inicial.length) {
+          if (caractere == " " || caractere == "\n") {
+            i += 1;
+            lexeme = "";
+            // i -= 1;
+            estado = 8;
+          } else if (caractere == "/" && count == inicial.length) {
             estado = 9;
           } else if (caractere != "/" && count == inicial.length) {
             i += 1;
-            comentario = true;
             estado = 9;
           }
         } else if (estado == 9) {
-          if (caractere == "/") {
+          if (caractere == " " || caractere == "\n") {
+            i += 1;
+            lexeme = "";
+            // i -= 1;
+            estado = 9;
+          } else if (caractere == "/") {
             estado = 10;
           } else if (caractere != "/") {
             estado = 8;
@@ -309,11 +331,15 @@ function main(inicial, alfabeto, simbolos) {
           }
         } else if (estado == 10) {
           lexeme = "";
-          i += 1;
           comentario = false;
+          i += 1;
           estado = 0;
         } else if (estado == 11) {
-          if (count == inicial.length) {
+          if (caractere == " " || caractere == "\n") {
+            i += 1;
+            lexeme = "";
+            estado = 11;
+          } else if (count == inicial.length) {
             inicial += i;
             estado = 12;
           } else {
@@ -321,7 +347,11 @@ function main(inicial, alfabeto, simbolos) {
           }
         } else if (estado == 12) {
           estado = 12;
-          if (caractere == "#" && count == inicial.length) {
+          if (caractere == " " || caractere == "\n") {
+            i += 1;
+            lexeme = "";
+            estado = 12;
+          } else if (caractere == "#" && count == inicial.length) {
             estado = 13;
           } else if (caractere != "#" && count == inicial.length) {
             i += 1;
@@ -331,7 +361,11 @@ function main(inicial, alfabeto, simbolos) {
         } else if (estado == 13) {
           // se for # fica aqui
           estado = 13;
-          if (caractere == "/") {
+          if (caractere == " " || caractere == "\n") {
+            i += 1;
+            lexeme = "";
+            estado = 13;
+          } else if (caractere == "/") {
             estado = 10;
           } else if (caractere != "#") {
             estado = 12;
@@ -339,11 +373,18 @@ function main(inicial, alfabeto, simbolos) {
         }
       }
     } else {
-      // console.log(`Erro: Caractere não esperado: ${lexeme}`);
+      console.log(`Erro: Caractere não esperado: ${lexeme}`);
       break;
     }
+
+    // if (comentario == true) {
+    //   console.log("Um comentário foi aberto e não foi finalizado.");
+    //   break;
+    // }
   }
 }
+
+var conta_linha = 0;
 
 function LeitorArquivo(caminho) {
   var inicial = "";
@@ -404,9 +445,10 @@ function LeitorArquivo(caminho) {
     "y",
     "z",
   ];
-
   lineReader.eachLine("arquivo.txt", function (line, last) {
+    
     inicial = line;
+    // conta_linha = line;
     main(inicial, alfabeto, simbolos);
   });
 }
