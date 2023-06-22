@@ -1,8 +1,5 @@
 //Aluna: Quemia Oliveira
 // Disc. Compiladores
-var estado = 0;
-var comentario = false;
-
 function main(inicial, alfabeto, simbolos) {
   for (i = 0; i < inicial.length; i++) {
     var count = i + 1;
@@ -20,7 +17,6 @@ function main(inicial, alfabeto, simbolos) {
             if (count == inicial.length) {
               lexeme += caractere;
               console.log(`Identificador: ${lexeme}`);
-              // i -= 1;
               estado = 0;
               lexeme = "";
             } else {
@@ -46,7 +42,6 @@ function main(inicial, alfabeto, simbolos) {
           } else if (caractere == "-") {
             if (count == inicial.length) {
               console.log(`Simbolo Especial: ${lexeme}`);
-              // i -= 1;
               lexeme = "";
               estado = 0;
             }
@@ -64,7 +59,6 @@ function main(inicial, alfabeto, simbolos) {
           } else if (simbolos.includes(caractere)) {
             console.log("Simbolo Especial: ", caractere);
             lexeme = "";
-            // i -= 1;
             estado = 0;
           } else {
             console.log(
@@ -84,7 +78,6 @@ function main(inicial, alfabeto, simbolos) {
               } else {
                 console.log(`Identificador: ${lexeme}`);
                 lexeme = "";
-                // i -= 1;
                 estado = 0;
               }
             } else {
@@ -97,16 +90,6 @@ function main(inicial, alfabeto, simbolos) {
           } else if (caractere == "@") {
             lexeme = lexeme + caractere;
             estado = 2;
-            // } else if (
-            //   !alfabeto.includes(caractere) ||
-            //   !/\d/.test(caractere) ||
-            //   caractere != "@" ||
-            //   caractere != "_"
-            // ) {
-            //   console.log(`Identificador: ${lexeme}`);
-            //   i -= 1;
-            //   lexeme = "";
-            //   estado = 0;
           } else {
             console.log(`Identificador: ${lexeme}`);
             i -= 1;
@@ -115,19 +98,9 @@ function main(inicial, alfabeto, simbolos) {
           }
         } else if (estado == 2) {
           if (alfabeto.includes(caractere) || /\d/.test(caractere)) {
-            // if (count == inicial.length) {
-            //   lexeme += inicial[i];
-            //   console.log(`Identificador : 2 ${lexeme}`);
-            //   estado = 0;
-            //   i -= 1;
-            //   lexeme = "";
-            // } else
-            // if {
             lexeme += caractere;
             estado = 3;
-            // }
           } else {
-            // lexeme += caractere;
             console.log(
               `Erro linha ${conta_linha}, caractere não esperado: ${caractere}`
             );
@@ -152,7 +125,6 @@ function main(inicial, alfabeto, simbolos) {
           } else {
             if (palavrasReservadas.includes(lexeme)) {
               console.log(`Palavra Reservada: ${lexeme}`);
-              // i -= 1;
               lexeme = "";
               estado = 0;
             } else {
@@ -181,12 +153,11 @@ function main(inicial, alfabeto, simbolos) {
             estado = 5;
           }
         } else if (estado == 6) {
-          if (caractere == "#" && count == inicial.length) {
+          if (caractere == "#") {
             comentario = true;
             lexeme += caractere;
             estado = 11;
           } else if (caractere == "/") {
-            // lexeme += caractere;
             comentario = true;
             lexeme += caractere;
             estado = 7;
@@ -305,11 +276,11 @@ function main(inicial, alfabeto, simbolos) {
           if (caractere == " " || caractere == "\n") {
             i += 1;
             estado = 8;
-          } else if (caractere == "/" && count == inicial.length) {
+          } else if (caractere == "/") {
             estado = 9;
           } else if (caractere != "/") {
             i += 1;
-            estado = 9;
+            estado = 8;
           }
           if (final == true && lexeme == "//") {
             console.log("Um comentário foi aberto e não foi finalizado.");
@@ -330,12 +301,10 @@ function main(inicial, alfabeto, simbolos) {
             break;
           }
         } else if (estado == 10) {
-          lexeme = "";
-          i += 1;
-          comentario = false;
-          // i -= 1;
-
-          estado = 0;
+            lexeme = "";
+            i += 1;
+            comentario = false;
+            estado = 0;
         } else if (estado == 11) {
           if (caractere == " " || caractere == "\n") {
             i += 1;
@@ -351,19 +320,18 @@ function main(inicial, alfabeto, simbolos) {
           if (caractere == " " || caractere == "\n") {
             i += 1;
             estado = 12;
-          } else if (caractere == "#" && count == inicial.length) {
+          } else if (caractere == "#") {
             estado = 13;
           } else if (caractere != "#") {
             i += 1;
-            estado = 13;
+            estado = 12;
           }
-          if (final == true && lexeme == "#/") {
+          if (final == true && lexeme == "/#") {
             console.log("Um comentário foi aberto e não foi finalizado.");
             break;
           }
         } else if (estado == 13) {
           // se for # fica aqui
-          // estado = 13;
           if (caractere == " " || caractere == "\n") {
             i += 1;
             estado = 13;
@@ -373,7 +341,7 @@ function main(inicial, alfabeto, simbolos) {
             estado = 12;
           }
 
-          if (final == true && lexeme == "#/") {
+          if (final == true && lexeme == "/#") {
             console.log("Um comentário foi aberto e não foi finalizado.");
             break;
           }
@@ -383,17 +351,40 @@ function main(inicial, alfabeto, simbolos) {
       console.log(`Erro: Caractere não esperado: ${lexeme}`);
       break;
     }
-
-    // if (comentario == true) {
-    //   console.log("Um comentário foi aberto e não foi finalizado.");
-    // }
   }
 }
 
 var conta_linha = 0;
 var final = false;
+var lineReader = require("line-reader");
+LeitorArquivo();
 
-function LeitorArquivo(caminho) {
+var lexeme = "";
+var palavrasReservadas = [
+  "program",
+  "if",
+  "then",
+  "else",
+  "while",
+  "do",
+  "until",
+  "repeat",
+  "int",
+  "double",
+  "char",
+  "case",
+  "switch",
+  "end",
+  "procedure",
+  "function",
+  "for",
+  "begin",
+];
+var estado = 0;
+var comentario = false;
+
+
+function LeitorArquivo() {
   var inicial = "";
   const simbolos = [",", ".", ";", "*", "(", ")", "#", "=", "{", "}"];
   const alfabeto = [
@@ -454,72 +445,11 @@ function LeitorArquivo(caminho) {
   ];
   lineReader.eachLine("arquivo.txt", function (line, last) {
     inicial = line;
-    // conta_linha = line;
     final = last;
-    // console.log(last)
     main(inicial, alfabeto, simbolos);
   });
 }
 
-const pulaLinha = (caractere, estado) => {
-  console.log("fffff", caractere);
-  console.log(newLine);
-  // if(caractere == )
 
-  estado = 12;
-  return caractere, estado;
-};
 
-var lineReader = require("line-reader");
-const nome_arquivo = "/arquivo.txt";
-const path = __dirname + `${nome_arquivo}`;
-LeitorArquivo(path);
 
-var lexeme = "";
-var palavrasReservadas = [
-  "program",
-  "if",
-  "then",
-  "else",
-  "while",
-  "do",
-  "until",
-  "repeat",
-  "int",
-  "double",
-  "char",
-  "case",
-  "switch",
-  "end",
-  "procedure",
-  "function",
-  "for",
-  "begin",
-];
-var simbolosEspecais = [
-  ";",
-  ",",
-  ".",
-  "+",
-  "-",
-  "*",
-  "(",
-  ")",
-  "<",
-  ">",
-  ":",
-  "=",
-  "{",
-  "}",
-  ":=",
-  "<>",
-  "<=",
-  ">=",
-  "/",
-  "@",
-  "_",
-  "#",
-];
-var regex = "\n";
-var criaRegex = / [/\n\n\r/]/g;
-var resultado = regex.match(criaRegex);
