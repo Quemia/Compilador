@@ -1,9 +1,10 @@
 //Aluna: Quemia Oliveira
 // Disc. Compiladores
-function lexico(inicial, aqui) {
-  // let j = 0;
-  // while(j <  inicial.length)
-  for (i = aqui; i < inicial.length; i++) {
+
+var classToken = [];
+
+function lexico(inicial, indice) {
+  for (i = indice; i < inicial.length; i++) {
     var count = i + 1;
     var caractere = inicial[i];
     conta_linha += 1;
@@ -59,7 +60,6 @@ function lexico(inicial, aqui) {
             lexeme += caractere;
             estado = 23;
           } else if (simbolos.includes(caractere)) {
-            // console.log("Simbolo Especial: ", caractere);
             lexeme = caractere;
             tipoLexico = "SimboloEspecial";
             isFinal = count == inicial.length;
@@ -116,13 +116,11 @@ function lexico(inicial, aqui) {
             if (count == inicial.length) {
               lexeme += caractere;
               if (palavrasReservadas.includes(lexeme)) {
-                // console.log(`Palavra Reservada: ${lexeme}  ss ${ count.length}`);
                 estado = 0;
                 isFinal = count == inicial.length;
                 tipoLexico = "PalavraReservada";
                 return { lexeme, tipoLexico, isFinal, count };
               } else {
-                // console.log(`Identificador: ${lexeme}  ss ${ count.length}`);
                 estado = 0;
                 tipoLexico = "Identificador";
                 isFinal = count == inicial.length;
@@ -134,16 +132,11 @@ function lexico(inicial, aqui) {
             }
           } else {
             if (palavrasReservadas.includes(lexeme)) {
-              // console.log(`Palavra Reservada: ${lexeme}  ss ${count.length}`);
               estado = 0;
               isFinal = count == inicial.length;
               tipoLexico = "PalavraReservada";
               return { lexeme, tipoLexico, isFinal, count };
             } else {
-              // console.log(`Identificador: ${lexeme}`);
-              // lexeme = "";
-              // i -= 1;
-              // estado = 0;
               estado = 0;
               tipoLexico = "Identificador";
               isFinal = count == inicial.length;
@@ -371,58 +364,75 @@ function lexico(inicial, aqui) {
   }
 }
 
-function sintatico(inicial) {
-  var classToken = [];
+function Sintatico(inicial) {
   var cont = 0;
   var linha = 0;
-  // var classToken = {
-  //   token: "",
-  //   end: false,
-  //   tipo: "",
-  //   contador: 0,
-  // };
 
   classToken = lexico(inicial, linha);
-
-  while (cont < classToken.count) {
-    if (classToken.lexeme != undefined) {
+  if (inicial == "\n") {
+    inicial += 1;
+  }
+  if (classToken.lexeme != undefined) {
+    if (control == 0) {
       if (classToken.lexeme == "program") {
         if (isFinal == false) {
           console.log(classToken);
           classToken = lexico(inicial, classToken.count);
           if (classToken.tipoLexico == "Identificador" && isFinal == false) {
             console.log(classToken);
-
             classToken = lexico(inicial, classToken.count);
-            if (classToken.lexeme == ";") {
+            if (classToken.lexeme == ";" && isFinal == true) {
               console.log(classToken);
-              // bloco();
+              control = 1;
+            } else {
+              console.log("Erro sintático 3");
             }
+          } else {
+            console.log("Erro sintático 2");
           }
         }
       } else {
+        console.log("Erro sintático 1");
+      }
+    } else if (control == 1) {
+      classToken = lexico(inicial, linha);
+      if (classToken.lexeme == "begin" && isFinal == true) {
+        console.log(classToken);
+        control = 2;
+      } else {
         console.log("Erro sintático");
-        break;
+      }
+    } else if (control == 2) {
+      classToken = lexico(inicial, linha);
+      if (classToken.lexeme == "if" && isFinal == false) {
+        console.log(classToken);
+        classToken = lexico(inicial, classToken.count);
+        if (
+          classToken.tipoLexico == "Digito" ||
+          (classToken.tipoLexico == "Identificador" && isFinal == false)
+        ) {
+          console.log(classToken);
+          classToken = lexico(inicial, classToken.count);
+        }
+      } else {
+        console.log("Erro sintático");
       }
     }
-
-    cont++;
   }
 }
 
 function LeitorArquivo() {
-  var inicial = "";
   lineReader.eachLine("arquivo.txt", function (line, last) {
     inicial = line;
     final = last;
-    sintatico(inicial);
+    Sintatico(inicial);
   });
 }
 
+var inicial = "";
 var conta_linha = 0;
 var final = false;
 var lineReader = require("line-reader");
-LeitorArquivo();
 
 var tipoLexico = "";
 var lexeme = "";
@@ -449,6 +459,7 @@ var palavrasReservadas = [
 var estado = 0;
 var comentario = false;
 var isFinal = false;
+
 var simbolos = [",", ".", ";", "*", "(", ")", "#", "=", "{", "}"];
 var alfabeto = [
   "A",
@@ -506,3 +517,6 @@ var alfabeto = [
   "y",
   "z",
 ];
+var control = 0;
+
+LeitorArquivo();

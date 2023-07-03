@@ -1,1 +1,3 @@
 program soma ;
+begin 
+  if  n > 1 then
