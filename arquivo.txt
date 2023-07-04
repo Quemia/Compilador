@@ -1,4 +1,3 @@
 program soma;
 begin
-  n_me := -85,00;
-end
+  n_me := 12> 1 ;
