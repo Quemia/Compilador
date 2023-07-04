@@ -6,14 +6,14 @@ var num = 0;
 
 function lexico(inicial, indice) {
   conta_linha += 1;
-  console.log(inicial);
+  // console.log(inicial);
 
   for (i = indice; i < inicial.length; i++) {
     var count = i + 1;
     var caractere = inicial[i];
     if (estado != -1) {
       if (comentario == false) {
-        console.log(caractere);
+        // console.log(caractere);
 
         if (estado == 0) {
           // lexeme = "";
@@ -223,7 +223,7 @@ function lexico(inicial, indice) {
             lexeme += caractere;
             estado = 16;
           } else {
-            // count -= 1;
+            count -= 1;
             estado = 0;
             isFinal = count == inicial.length;
             tipoLexico = "Digito";
@@ -407,20 +407,8 @@ function lexico(inicial, indice) {
   }
 }
 
-// function fator(classToken){
-//   if (
-//     classToken.tipoLexico == "Digito" ||
-//     (classToken.tipoLexico == "Identificador" && isFinal == true)
-//   ) {
-//     console.log(classToken);
-//   }
-// }
-
-function termo(inicial, numCont) {
-  // console.log(inicial, numCont);
-
-  classToken = lexico(inicial, numCont);
-
+function termo(inicial) {
+  classToken = lexico(inicial, classToken.count);
   if (
     classToken.tipoLexico == "Digito" ||
     (classToken.tipoLexico == "Identificador" && isFinal == true)
@@ -429,9 +417,22 @@ function termo(inicial, numCont) {
   }
 }
 
-function expressaoSimpless(inicial, numCont) {
-  // console.log(inicial, numCont);
+function Operador(inicial) {
+  classToken = lexico(inicial, classToken.count);
+  if (
+    classToken.lexeme == ">" ||
+    classToken.lexeme == "=" ||
+    classToken.lexeme == "<" ||
+    classToken.lexeme == "<>" ||
+    classToken.lexeme == "<=" ||
+    classToken.lexeme == ">="
+  ) {
+    console.log(classToken);
+    termo(inicial);
+  }
+}
 
+function expressaoSimpless(inicial) {
   if (classToken.lexeme == "+" || classToken.lexeme == "-") {
     console.log("**", classToken);
     // console.log("entrei");
@@ -441,31 +442,14 @@ function expressaoSimpless(inicial, numCont) {
     classToken.tipoLexico == "Digito" ||
     classToken.tipoLexico == "Identificador"
   ) {
-    // classToken = lexico(inicial, numCont);
-    console.log("*** ", classToken);
-    // classToken = lexico(inicial, numCont);
-
-    // return ;
+    console.log(classToken);
+    Operador(inicial);
   }
 }
 
-function expressao(inicial, numCont) {
-  // console.log("+ ", inicial, numCont);
-
-  classToken = lexico(inicial, numCont);
-  expressaoSimpless(inicial, numCont);
-
-  // console.log("++++ ", inicial, numCont);
-
-  // console.log("--- ", numCont);
-
-  classToken = lexico(inicial, numCont-1);
-  console.log("--- ", numCont);
-
-  if (classToken.lexeme == ">") {
-    // classToken = lexico(inicial, numCont);
-    console.log("+*+* ", classToken);
-  }
+function expressao(inicial) {
+  classToken = lexico(inicial, classToken.count);
+  expressaoSimpless(inicial, classToken.count);
 }
 
 function Sintatico(inicial) {
@@ -547,25 +531,10 @@ function Sintatico(inicial) {
           console.log(classToken);
           num = classToken.count;
           expressao(inicial, num);
-          /*if (
-            classToken.tipoLexico == "Digito" ||
-            (classToken.tipoLexico == "Identificador" && isFinal == true)
-          ) {
-            console.log(classToken);
-            classToken = lexico(inicial, classToken.count);
-            if (classToken.lexeme == ";" && isFinal == true) {
-              console.log(classToken);
-              if (inicial != "") {
-                control = 3;
-              } else {
-                console.log("Erro sintático");
-              }
-            } else {
-              console.log("Erro sintático");
-              return;
-            }
-          }*/
-          {
+          console.log(":", inicial, classToken.count);
+          classToken = lexico(inicial, classToken.count);
+          console.log(classToken);
+          if (classToken.lexeme == ";") {
             console.log("Erro sintático 1");
             return;
           }
