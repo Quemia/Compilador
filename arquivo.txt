@@ -1,4 +1,6 @@
 program soma;
 begin
-  n_me := 12 > 15;
-end
+  n_me := 12 >= 28,74 or 24 and ( funcao > 45) * identificador ; 
+  teste := 22;
+  casa := 88 <= teste;
+  end
