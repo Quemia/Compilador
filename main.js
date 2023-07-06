@@ -4,19 +4,16 @@
 var classToken = [];
 var num = 0;
 
+
 function lexico(inicial, indice) {
   conta_linha += 1;
-  // console.log("inicial", inicial);
-
   for (i = indice; i <= inicial.length; i++) {
     var count = i + 1;
     var caractere = inicial[i];
 
     if (estado != -1) {
       if (comentario == false) {
-        // console.log(caractere);
         if (estado == 0) {
-          // lexeme = "";
           if (caractere == " " || caractere == "\n") {
             i += 1;
             lexeme = "";
@@ -25,13 +22,11 @@ function lexico(inicial, indice) {
           } else if (alfabeto.includes(caractere)) {
             if (count == inicial.length) {
               lexeme += caractere;
-              // console.log(`Identificador: ${lexeme}`);
-              i -= 1;
+              count -= 1;
               estado = 0;
               tipoLexico = "Identificador";
               isFinal = count == inicial.length;
               return { lexeme, tipoLexico, isFinal, count };
-              lexeme = "";
             } else {
               lexeme = caractere;
               estado = 1;
@@ -39,9 +34,11 @@ function lexico(inicial, indice) {
           } else if (caractere == "@") {
             if (count == inicial.length) {
               lexeme += inicial[i];
-              console.log(`Simbolo Especial: ${lexeme}`);
+              count -= 1;
               estado = 0;
-              lexeme = "";
+              tipoLexico = "SimboloEspecial";
+              isFinal = count == inicial.length;
+              return { lexeme, tipoLexico, isFinal, count };
             } else {
               lexeme = caractere;
               estado = 4;
@@ -140,14 +137,12 @@ function lexico(inicial, indice) {
                 isFinal = count == inicial.length;
                 tipoLexico = "PalavraReservada";
                 return { lexeme, tipoLexico, isFinal, count };
-                lexeme = "";
               } else {
                 i -= 1;
                 estado = 0;
                 tipoLexico = "Identificador";
                 isFinal = count == inicial.length;
                 return { lexeme, tipoLexico, isFinal, count };
-                lexeme = "";
               }
             } else {
               lexeme += caractere;
@@ -172,19 +167,22 @@ function lexico(inicial, indice) {
             lexeme = lexeme + inicial[i];
             estado = 5;
           } else {
-            console.log("Simbolo Especial: ", lexeme);
-            lexeme = "";
-            i -= 1;
+            count -= 1;
             estado = 0;
+            tipoLexico = "SimboloEspecial";
+            isFinal = count == inicial.length;
+            return { lexeme, tipoLexico, isFinal, count };
           }
         } else if (estado == 5) {
-          if (count == inicial.length) {
-            console.log(`Comentário: ${lexeme}`);
-            lexeme = "";
-            estado = 0;
-          } else {
-            estado = 5;
-          }
+          // if (count == inicial.length) {
+          // console.log(`Comentário: ${lexeme}`);
+          // lexeme = "";
+          // lexeme = "\n";
+          estado = 0;
+          count = "\n";
+          tipoLexico = "Comentario";
+          isFinal = count == inicial.length;
+          return { lexeme, tipoLexico, isFinal, count };
         } else if (estado == 6) {
           if (caractere == "#") {
             comentario = true;
@@ -425,26 +423,18 @@ function expressao(inicial) {
 }
 
 function fator() {
-  console.log(classToken);
-
   if (
     classToken.tipoLexico == "Digito" ||
     (classToken.tipoLexico == "Identificador" && isFinal == true)
   ) {
     console.log(classToken);
-  }
-
-  breakme: {
-    if (classToken.lexeme == "(") {
-      console.log("aqui ", classToken);
-      expressao(inicial);
-
-      if (classToken.lexeme == ")") {
-        console.log(classToken);
-      } else {
-        console.log("Erro sintático, esperado ')' ");
-        break breakme;
-      }
+  } else if (classToken.lexeme == "(") {
+    console.log("aqui ", classToken);
+    expressao(inicial);
+    if (classToken.lexeme == ")") {
+      console.log(classToken);
+    } else {
+      console.log("Erro sintático, esperado ')' ");
     }
   }
 }
@@ -452,43 +442,14 @@ function fator() {
 function termo(inicial) {
   fator();
   classToken = lexico(inicial, classToken.count);
-
   if (
-    classToken.tipoLexico == "Digito" ||
-    (classToken.tipoLexico == "Identificador" && isFinal == true)
+    classToken.lexeme == "*" ||
+    classToken.lexeme == "div" ||
+    classToken.lexeme == "and"
   ) {
-    console.log("x ", classToken);
-  }
-
-  breakme: {
-    if (
-      classToken.lexeme == "*" ||
-      classToken.lexeme == "div" ||
-      classToken.lexeme == "and"
-    ) {
-      console.log(classToken);
-      classToken = lexico(inicial, classToken.count);
-      termo(inicial);
-    } else {
-      break breakme;
-    }
-  }
-}
-
-function relacao(inicial) {
-  classToken = lexico(inicial, classToken.count);
-  if (
-    classToken.lexeme == ">" ||
-    classToken.lexeme == "=" ||
-    classToken.lexeme == "<" ||
-    classToken.lexeme == "<>" ||
-    classToken.lexeme == "<=" ||
-    classToken.lexeme == ">="
-  ) {
-    console.log(classToken);
+    // console.log(classToken);
+    classToken = lexico(inicial, classToken.count);
     termo(inicial);
-  } else {
-    return;
   }
 }
 
@@ -498,19 +459,18 @@ function expressaoSimpless(inicial) {
     classToken.tipoLexico == "Identificador"
   ) {
     termo(inicial);
+  } else {
+    console.log(`Erro sintático, esperado expressão simples`);
   }
-  breakme: {
-    if (
-      classToken.lexeme == "+" ||
-      classToken.lexeme == "-" ||
-      classToken.lexeme == "or"
-    ) {
-      console.log(classToken);
-      classToken = lexico(inicial, classToken.count);
-      termo(inicial);
-    } else {
-      break breakme;
-    }
+
+  if (
+    classToken.lexeme == "+" ||
+    classToken.lexeme == "-" ||
+    classToken.lexeme == "or"
+  ) {
+    console.log(classToken);
+    classToken = lexico(inicial, classToken.count);
+    termo(inicial);
   }
 }
 
@@ -540,10 +500,6 @@ function Sintatico(inicial) {
 
   if (estado == -1) {
     return;
-  }
-
-  if (inicial == " ") {
-    inicial += "\n";
   }
 
   classToken = lexico(inicial, linha);
@@ -576,24 +532,10 @@ function Sintatico(inicial) {
       control == 1
     ) {
       console.log(classToken);
-      // control = 2;
-      // } else if (control == 2) {
-      //   // <comando sem rótulo>
-      //   classToken = lexico(inicial, linha);
-      //   // condicional
-      //   if (classToken.lexeme == "if" && isFinal == false) {
-      //     console.log(classToken);
-      //     classToken = lexico(inicial, classToken.count);
-      //     if (
-      //       classToken.tipoLexico == "Digito" ||
-      //       (classToken.tipoLexico == "Identificador" && isFinal == false)
-      //     ) {
-      //       console.log(classToken);
-      //       classToken = lexico(inicial, classToken.count);
-      //     }
-      //   }
-      //atribuição
+    } else if (classToken.tipoLexico == "Comentario") {
+      classToken = lexico(inicial, linha);
     } else if (classToken.tipoLexico == "Identificador" && isFinal == false) {
+      //atribuição
       console.log(classToken);
       classToken = lexico(inicial, classToken.count);
       if (classToken.lexeme == ":=" && isFinal == false) {
@@ -613,7 +555,7 @@ function Sintatico(inicial) {
     } else if (classToken.lexeme == "end" && final == true) {
       console.log(classToken);
       console.log("Compilado com sucesso.");
-    } else if (final == true && classToken.lexeme != "end") {
+    } else if (final == true) {
       console.log("Erro sintático, esperava fechamento de bloco.");
       estado = -1;
     } else {
@@ -621,8 +563,8 @@ function Sintatico(inicial) {
       estado = -1;
     }
   } else {
-    console.log("Erro sintático, esperava fechamento de bloco.");
-    throw "stop";
+    console.log("Erro sintático.");
+    estado = 1;
   }
 }
 
@@ -647,6 +589,7 @@ var conta_linha = 0;
 var final = false;
 var lineReader = require("line-reader");
 const fs = require("fs");
+const { clearScreenDown } = require("readline");
 
 var tipoLexico = "";
 var lexeme = "";
