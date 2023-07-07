@@ -1,7 +1,11 @@
 program soma;
 begin
-@@ comentario
+
   n_me := 12 >= 28,74 or 24 and ( funcao > 45) * identificador ; 
+  
+  @@ outro comentario
   teste := 22;
+
   casa := 88 <= teste + 55;
+  
 end

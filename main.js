@@ -6,13 +6,14 @@ var num = 0;
 
 function lexico(inicial, indice) {
   conta_linha += 1;
+
   for (i = indice; i <= inicial.length; i++) {
     var count = i + 1;
     var caractere = inicial[i];
-
     if (estado != -1) {
       if (comentario == false) {
         if (estado == 0) {
+          // console.log(caractere);
           if (caractere == " " || caractere == "\n") {
             i += 1;
             lexeme = "";
@@ -489,6 +490,10 @@ function Sintatico(inicial) {
     return;
   }
 
+  if (inicial.length == 0) {
+    classToken = lexico(inicial, linha);
+  }
+
   classToken = lexico(inicial, linha);
 
   if (classToken.lexeme != undefined) {
@@ -503,12 +508,12 @@ function Sintatico(inicial) {
             // console.log(classToken);
             control = 1;
           } else {
-            console.log("Erro sintático");
+            console.log("Erro sintático, espera ; ");
             estado = -1;
             return;
           }
         } else {
-          console.log("Erro sintático 2");
+          console.log("Erro sintático, esperado Identificador.");
           estado = -1;
           return;
         }
@@ -558,17 +563,9 @@ function Sintatico(inicial) {
 
 function LeitorArquivo() {
   lineReader.eachLine("arquivo.txt", async function (line, last) {
-    // let cont = line.length;
     inicial = line;
     final = last;
-
-    if (inicial.length == 0) {
-      console.log(": ", line);
-      line.newRead();
-    }
-
     Sintatico(inicial);
-    // console.log(": ", inicial);
   });
 }
 
@@ -576,8 +573,8 @@ var inicial = "";
 var conta_linha = 0;
 var final = false;
 var lineReader = require("line-reader");
-const fs = require("fs");
-const { clearScreenDown } = require("readline");
+// const fs = require("fs");
+// const { clearScreenDown } = require("readline");
 
 var tipoLexico = "";
 var lexeme = "";
