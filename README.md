@@ -2,4 +2,4 @@
 
   :white_check_mark: Léxico - Finalizado
   
-  :bulb: Sintatico (faltam algumas regras sintáticas)
+  :bulb: Sintático (faltam algumas regras sintáticas)
